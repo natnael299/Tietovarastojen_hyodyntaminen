@@ -1,0 +1,5 @@
+1. SELECT nimi, valmistumisvuosi FROM leffat JOIN ohjaajat JOIN nayttelijat WHERE ohjaajan_id=id AND nayttelija_id=id;
+2. SELECT * FROM ohjaajat WHERE valmistumisvuosi<1980;
+3. SELECT nimi, syntymavuosi, hotness FROM nayttelijat WHERE hotness>8;
+4. SELECT nimi.leffat, ohjaajat.nimi, valmistumisvuosi FROM leffat WHERE 1990<valmistumisvuosi<2005 JOIN ohjaajat WHERE ohjaajan_id=id;
+5. SELECT leffat.nimi, ohjaajat.nimi, hotness FROM leffat JOIN ohjaajat WHERE ohjaajan_id=id AND hotness>5;
