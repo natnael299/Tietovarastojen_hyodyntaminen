@@ -1,4 +1,4 @@
-from conn import *
+from leffat_funs.conn import *
 from tabulate import tabulate
 
 #get functionalities

@@ -1,6 +1,6 @@
-from conn import *
-from get import *
-from put import *
+from leffat_funs.conn import *
+from leffat_funs.get import *
+from leffat_funs.put import *
 
 print("--- Welcome!! ---")
 print("mikä haluat tehdää.....?")

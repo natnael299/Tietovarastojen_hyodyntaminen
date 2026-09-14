@@ -1,5 +1,5 @@
-from conn import *
-from get import *
+from leffat_funs.conn import *
+from leffat_funs.get import *
 
 def insertTOArtist():
         nimi = input("naytelijan nimi...: ")
