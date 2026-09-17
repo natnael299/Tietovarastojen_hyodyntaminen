@@ -1,0 +1,109 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+@import url(https://fonts.googleapis.com/css?family=Roboto:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto", Arial, Helvetica;
+  transition: all 0.35s ease-in-out;
+  background-color: #2525250c;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+h1,
+h2 {
+  font-family: "Raleway";
+}
+
+Header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  height: 50px;
+  width: 100%;
+  z-index: 1000;
+}
+
+Header .links {
+  display: flex;
+  gap: 10px;
+}
+
+.links a {
+  text-decoration: none;
+  border: 1px solid black;
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  color: black;
+}
+
+.links a:hover {
+  background-color: black;
+  color: #fff;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  height: 40px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: black;
+  color: #fff;
+}
+
+footer a {
+  color: #fff;
+}
+
+footer a:hover {
+  color: blue;
+}
+
+@media (max-width: 480px) {
+  #auth:popover-open {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    top: 52px;
+    right: 0;
+    left: 0;
+    margin: 0;
+    padding: 8px 0;
+    border-radius: 0 0 10px 10px;
+    border: 1px solid #25252533;
+  }
+
+  #auth a {
+    text-decoration: none;
+    width: min(92%, 360px);
+    color: #252525;
+    border: 1px solid #25252533;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: center;
+    background-color: #fff;
+    margin: 0 auto;
+  }
+
+  #auth a:hover {
+    background-color: #252525;
+    color: #fff;
+  }
+
+  #auth a[href*="logout"] {
+    border-color: #25252566;
+  }
+}
