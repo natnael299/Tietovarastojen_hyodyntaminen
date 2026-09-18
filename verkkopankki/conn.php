@@ -30,6 +30,14 @@ function getLoggedInUserInfo($conn, $id){
   return $result;
 }
 
+function fetchUserByAccountId($conn, $id){
+  $query = "SELECT accounts.*,users.username, users.email FROM accounts JOIN users ON users.id=accounts.user_id WHERE accounts.id=?";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("i", $id);
+  $stmt->execute();
+  return $stmt->get_result()->fetch_assoc();
+}
+
  function addTransactionToDB($conn, $targetId, $accountId, $counterPartId, $sign, $amount ){
     $query = "INSERT INTO transactions (user_id, account_id, counterparty_id, type, amount) VALUES(?,?,?,?,?)";
     $stmt = $conn->prepare($query);
