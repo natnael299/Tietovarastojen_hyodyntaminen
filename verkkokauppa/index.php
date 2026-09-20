@@ -3,7 +3,7 @@
 
  $stmt = "SELECT * from products";
  $result = $conn-> query($stmt);
- $data[] = $result->fetch_assoc();
+ $data = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
  <!DOCTYPE html>
@@ -12,6 +12,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <style>
+        table {
+  border-collapse: collapse;
+  background-color: rgba(128, 128, 128, 0.084);
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+table td {
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #80808081;
+}
+
+table th {
+  padding: 15px;
+  background-color: orange;
+  color: #fff;
+  text-align: center;
+  vertical-align: middle;
+}
+  </style>
  </head>
  <body>
   <table>
