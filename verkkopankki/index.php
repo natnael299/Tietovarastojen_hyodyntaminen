@@ -65,6 +65,28 @@ if(isset($_POST["send"])){
   $error = "virhe tarkista syöttämäsi tiedot!!";
 }
 }
+
+$message = null;
+//handle user's request
+$query = "INSERT INTO requests (user_id, type) VALUES(?,?)";
+$stmt = $conn->prepare($query);
+try{
+if(isset($_POST["creation"])){
+  $type = "creation";
+  $stmt->bind_param("is", $userId, $type);
+  $stmt->execute();
+  }else if(isset($_POST["deletion"])){
+    if($loggedInUserAccountInfo["amount"] == 0){
+      $type = "deletion";
+      $stmt->bind_param("is", $userId, $_POST["deletion"]);
+      $stmt->execute();
+    }else{
+     $message = "Tilillasi on raha, ei sitä voi poista!!";
+    }
+}
+}catch(mysqli_sql_exception  $e){
+  $message = "Joku virhe on saatunut, Yritää uudelleen!!";
+}
 ?>
 
 <!DOCTYPE html>
@@ -75,6 +97,36 @@ if(isset($_POST["send"])){
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link rel="stylesheet" href="./style/index.css">
+  <style>
+[popover] {
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #f9f9f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+[popover] button,
+.actionBtn {
+margin-top: 15px;
+padding: 10px;
+border-radius: 10px;
+border: none;
+background-color: black;
+color: #fff;
+}
+
+/* Styles applied only when open */
+[popover]:popover-open {
+  opacity: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;
+  gap: 15px;
+  padding: 30px;
+  margin: auto;
+  transform: scale(1);
+}
+  </style>
 </head>
 
 <body>
@@ -132,7 +184,36 @@ if(isset($_POST["send"])){
         <button class="addBtn" name="send" type="submit">Lähettää</button>
       </form>
     </div>
+
+    <div>
+      <!-- Opens deletion popover -->
+      <button popovertarget="deletionId" class="actionBtn">
+        Request account deletion
+      </button>
+      
+      <!-- Opens creation popover -->
+      <button popovertarget="creationId" class="actionBtn">
+        Request new account creation
+      </div>
+    </button>
+
+        <!-- deletion popover -->
+      <form action="#" method="post" popover id="deletionId">
+        <p>Oletko varma että, haluat poista tätä tili...?</p>
+        <button name="deletion">Kyllä Poista</button>
+        <?php if($message):  ?>
+          <p><?= $message ?></p>
+          <?php  endif; ?>
+        </form>
+        
+        <!-- creation popover -->
+        <form action="#" method="post" popover id="creationId">
+          <p>Oletko varma että, haluat uudeen tillin...?</p>
+          <button name="creation">Kyllä tilaa</button>
+      <?php if($message):  ?>
+        <p><?= $message ?></p>
+      <?php  endif; ?>
+  </form>
   </div>
 </body>
-
 </html>

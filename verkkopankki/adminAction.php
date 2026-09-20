@@ -1,27 +1,33 @@
 <?php 
 include("conn.php");
-$id = (int) $_GET["id"];
-$action = $_GET["action"];
+$id = $_GET["id"] ?? "";
+$action = $_GET["action"] ?? "";
+$accountId = $_GET["account"] ?? "";
+$role = $_GET["role"] ?? "";
 
 $r = fetchUserByAccountId($conn, $id);
 
-//update user info
-if(isset($_POST["edit"])){
+//create a new user
+if(isset($_POST["createUser"])){
   $username = trim($_POST["name"]);
   $email = trim($_POST["email"]);
+  $password = trim($_POST["password"]);
   $accountNo = trim($_POST["account_no"]);
+  $amount = trim($_POST["amount"]);
 
   $conn->begin_transaction();
 
   try {
-    $query = "UPDATE users SET username=?, email=? WHERE id=?";
+    $query = "INSERT INTO users (username, email, password, role) VALUES(?,?,?,?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ssi", $username, $email, $r["user_id"]);
+    $stmt->bind_param("ssss", $username, $email, $password, $role);
     $stmt->execute();
 
-    $query = "UPDATE accounts SET account_no=? WHERE id=?";
+     $userId = $conn->insert_id;
+
+    $query = "INSERT INTO accounts (account_no, user_id, amount) VALUES(?,?,?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("si", $accountNo, $id);
+    $stmt->bind_param("sid", $accountNo,$userId, $amount);
     $stmt->execute();
 
     $conn->commit();
@@ -33,14 +39,40 @@ if(isset($_POST["edit"])){
   }
 }
 
-//update user info
+//delete a user
 if(isset($_POST["delete"]))
   {
-  $stmt = $conn->prepare("DELETE FROM users WHERE id=?");
-  $stmt->bind_param("i", $r["user_id"]);
+  $stmt = $conn->prepare("DELETE FROM accounts WHERE id=?");
+  $stmt->bind_param("i", $accountId);
    if($stmt->execute()){
       header("Location: ./dashboard.php");
    };
+  }
+
+  //create a new account
+  if(isset($_POST["createAccount"])){
+    $query = "INSERT INTO accounts (id, user_id, account_no, amount) VALUES(?,?,?,?)";
+    $account_no = $_POST["account_no"];
+    $amount = $_POST["amount"];
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("iisd", $accountId, $id, $account_no, $amount);
+    if($stmt->execute()){
+      header("Location: ./dashboard.php");
+    };
+  }
+
+  //create an admin
+  if(isset($_POST["createUser"])){
+    $username = trim($_POST["name"]);
+    $email = trim($_POST["email"]);
+    $password = trim($_POST["password"]);
+    $accountNo = trim($_POST["account_no"]);
+    $amount = trim($_POST["amount"]);
+
+    $query = "INSERT INTO users (username, email, password, role) VALUES(?,?,?,?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ssss", $username, $email, $password, $role);
+    $stmt->execute();
   }
 ?>
 
@@ -65,7 +97,8 @@ if(isset($_POST["delete"]))
       gap: 15px;
     }
 
-    form input[type="text"] {
+    form input[type="text"],
+    form input[type="number"] {
       border: 1px solid black;
       width: 400px;
       padding-left: 10px;
@@ -83,22 +116,44 @@ if(isset($_POST["delete"]))
   </style>
 </head>
 <body>
-  <?php if($action=="edit"): ?>
-  <!-- Update From -->
+  <?php if($action=="create" && $role == ""): ?>
+  <!-- Create a new user -->
   <form action="#" method="post">
-    <h3>Update a users info </h3>
-    <input type="text" name="name" placeholder="username" value="<?= htmlspecialchars($r["username"]) ?>">
-    <input type="text" name="email" placeholder="email@example.com" value="<?= htmlspecialchars($r["email"]) ?>">
-    <input type="text" name="account_no" placeholder="account number" value="<?= htmlspecialchars($r["account_no"]) ?>">
-    <input type="submit" name="edit" value="Edit">
+    <h3>Create a new account </h3>
+    <input type="text" name="name" placeholder="username" value="<?= htmlspecialchars($r["username"]) ?>" disabled>
+    <input type="text" name="email" placeholder="email@example.com" value="<?= htmlspecialchars($r["email"]) ?>" disabled>
+    <input type="text" name="account_no" placeholder="new account number">
+    <input type="number" name="amount" min="0" placeholder="starting amount eg. 200 €">
+    <input type="submit" name="createAccount" value="Create Account">
   </form>
+  <?php elseif($action=="create" && $role == "user"): ?>
+    <!-- the form to add new users -->
+  <form action="#" method="post" class="form">
+    <h3>Create a New User </h3>
+    <input type="text" name="name" placeholder="username" >
+    <input type="text" name="email" placeholder="email@example.com" >
+    <input type="text" name="account_no" placeholder="account number" >
+    <input type="text" name="password" placeholder="password eg.0101">
+    <input type="number" name="amount" placeholder="starting amount eg.0001" min="0">
+    <input type="submit" name="createUser" value="Create A new User" >
+  </form>
+  <?php elseif($action=="create" && $role == "admin"): ?>
+    <!-- the form to add new users -->
+  <form action="#" method="post" class="form">
+    <h3>Add a New Admin </h3>
+    <input type="text" name="name" placeholder="username" >
+    <input type="text" name="email" placeholder="email@example.com" >
+    <input type="text" name="password" placeholder="password eg.0101">
+   <input type="submit" name="createAdmin" value="Create Admin" >
+  </form>
+
   <?php else: ?>
     <!-- Delete Form -->
   <form action="#" method="post">
-    <h3>Delete a user</h3>
+    <h3>Delete an account</h3>
     <input type="text" name="name" placeholder="username" value="<?= htmlspecialchars($r["username"]) ?>" disabled>
     <input type="text" name="email" placeholder="email@example.com" value="<?= htmlspecialchars($r["email"]) ?>" disabled>
-    <input type="text" name="account_no" placeholder="account number" value="<?= htmlspecialchars($r["account_no"]) ?>" disabled>
+    <input type="text" name="account_no" placeholder="account number" value="<?= htmlspecialchars($r["account_no"]) ?>"  disabled>
     <input type="submit" name="delete" value="Delete">
   </form>
 <?php endif; ?>
