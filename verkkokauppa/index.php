@@ -40,17 +40,17 @@ table th {
   <table>
     <thead>
       <tr>
-        <th>first name</th>
-        <th>last name</th>
-        <th>address</th>
+        <th>id</th>
+        <th>name</th>
+        <th>price</th>
       </tr>
     </thead>
     <tbody>
      <?php foreach($data as $d): ?>
           <tr>
-            <td><?= $d["first_name"]; ?></td>
-            <td><?= $d["last_name"]; ?></td>
-            <td><?= $d["address"]; ?></td>
+            <td><?= $d["id"]; ?></td>
+            <td><?= $d["name"]; ?></td>
+            <td><?= $d["price"]." €"; ?></td>
           </tr>
     <?php endforeach; ?>
     </tbody>
